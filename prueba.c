@@ -16,6 +16,7 @@ int main()
 {
 	int dim = 3;
   float p = 0.5;
+	srand(time(NULL));
 	int *red;
 	red=(int *)malloc(dim*dim*sizeof(int));
 	poblar(red, p, dim);
@@ -31,7 +32,6 @@ int poblar(int *red,float p,int dim)
 {
   int i;
   float rndm;
-  srand(time(NULL));
   for (i=0; i<dim*dim; i++)
   {
     rndm=(float)rand()/(float)RAND_MAX;
@@ -67,73 +67,65 @@ int clasificar(int *red, int dim)
 	{
 		*red=frag;
 	}
-	for(i=1; i<dim;i++) //para la segunda fila
+	for(i=1; i<dim;i++) //para la segunda fila en adelante
 	{
-		if(*(red+i)==*(red+(i-1)))
+		if(*(red+i)==*(red+(i-1))) //veo arriba y abajo para todas las filas y etiqueto
 		{
+			/* s no está definido en ningun lado tmp historial
+			s es la etiqueta en la que me paro en el historial	*/
 			actualizar(red+i,historial,s,frag); //actualizo el valor en el que me paro y el del frag
 		}
 	}
+	//acá agrego las etiquetas laterales y corrigo las etiquetas por las verdaderas 
 	for(i=1;i<dim;i++)
 	{
-	acutalizar(red+i*dim,historial,s,frag);
-	for(j=1;j<dim;j++)
-	{
-		if(s1*s2)
-		{
-		etiqueta_falsa();
-		}
-		else
-		{
-		if(s1)
-		{
-			actualizar(,s1)}
-		}
-		else
-		{
-			actualizar(,s2)}
-		}
-		}
-		}
+		acutalizar(red+i*dim,historial,s,frag);
+			for(j=1;j<dim;j++)
+			{
+				if(s1*s2)
+				{
+					etiqueta_falsa();
+				}
+				else
+				{
+					if(s1)
+					{
+						actualizar(,s1)}
+					}
+					else
+					{
+						actualizar(,s2)}
+					}
+				}
+			}
 return 0;
 		}
-//*************************************************************
-int crear_etiquetas(int *red,int frag)
-{
-	int i;
-	int frag=2;
-	//Para el caso a) no se hace nada
-	//Ahora hago el caso b)
-	for(i=1; i<dim;i++) //para la primera fila
-	{
-		if(*(red)) //si el contendio es 0 lo deja sino lo cambia por un 2
-		{
-			*red=frag;
-		}
-	//Ahora hago el caso c)
-		if(*(red))
-		{
-			*red=frag;
-		}
-	//Ahora hago el caso d)
 
-	while(*historial+s<0)
-		{
-			s=-*historial+s;
-		}
-	*local=s
-}
 //*************************************************************
 int etiqueta_falsa(*int local, int historial, int s1, int s2, int frac)
 {
+if (s1 < s2)
+{
+	*(historial+max)=-min;
+	*(historial+min)=min;
+}
 
 }
 //*************************************************************
 int actualizar(int *local,int *historial,int s,int frag)
 {
-	while(*historial+s<0)
+	if (s)
+	{
+		while(*historial+s<0)
 		{
-			s=-*historial+s;
+			s=-(*historial+s);
 		}
-	*local=s
+		*local=s
+	}
+	else
+	{
+		*local = frag;
+		frag++;
+	}
+	return frag;
 }
