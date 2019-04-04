@@ -19,13 +19,13 @@ int main()
 
 {
 
-	srand(1);
+	srand(time(NULL));
 	int dim = 5;
-    	float p = 0.5;
+  float p = 0.5;
 	int etiqueta=2;
 	int *red;
 	int b;
-	red=(int *)malloc(dim*dim*sizeof(int));  
+	red=(int *)malloc(dim*dim*sizeof(int));
 	int *historial;
 	historial=(int *)malloc(dim*dim*sizeof(int));
 	int r;
@@ -34,34 +34,30 @@ int main()
 	}
 
 	poblar(red, p,dim);
-	printf("Red Originial: \n");	
+	printf("Red Originial1: \n");
 	imprimirMat(red,dim);
-		
-	poblar(red, p,dim);
-	printf("Red Originial: \n");	
-	imprimirMat(red,dim);
-	
+
 	clasificar(red,
 	dim,historial,etiqueta);
-	printf("Historial: \n");	
+	printf("Historial: \n");
 	imprimirVector(historial,dim);
-	
-	printf("Red modificada: \n");	
+
+	printf("Red modificada: \n");
 	imprimirMat(red,dim);
 
 	arreglar_etiquetas(red, historial, dim);
-	printf("Red arreglada: \n");	
+	printf("Red arreglada: \n");
 	imprimirMat(red,dim);
 
 	b=percola(red, dim);
 	if (b)
 	{printf("¡Percoló!");
 	}else{
-	printf("Nope, no percoló"); 	
+	printf("Nope, no percoló");
 	}
-	printf("\n"); 	
-	
-	free(red);		
+	printf("\n");
+
+	free(red);
 	return 0;
 }
 
@@ -105,44 +101,41 @@ int imprimirVector(int *vect, int dim)
 	{printf("%d", *(vect+k));
         }
 	 printf("\n");
-	
+
     return 0;
     }
 //*************************************************************
 int clasificar(int *red, int dim,int *historial,int etiqueta)
 {
-	
-	int j,i;	
+
+	int j,i;
 	int s1;
 	int s2;
 
-	
-	
-	
 	if (*red)// la primer celda
 	{
 	*red=etiqueta;
 	etiqueta++;
 	}
 	for(i=1; i<dim;i++)//La primer fila
-	{	
+	{
 		if(*(red+i)>0)// Si tiene un 1
 			etiqueta=actualizar(red+i,historial,*(red+(i-1)),etiqueta);
-				
+
 	}
-	
+
 	for(j=1;j<dim;j++) //el resto de las filas
 	{
 
 		if(*(red+j*dim)>0) // La primer columna de cada fila, si tiene un 1
 			etiqueta=actualizar(red+j*dim,historial,*(red+(j-1)*dim),etiqueta);
-		
+
 		for(i=1;i<dim;i++) // el resto de las columnas
 		{
 
 				if(*(red+j*dim+i)>0) // si tiene un 1
 				{
-					
+
 					s1=*(red+j*dim+i-1); // la de la izquierda
 					s2=*(red+(j-1)*dim+i);	// la de arriba
 
@@ -159,10 +152,10 @@ int clasificar(int *red, int dim,int *historial,int etiqueta)
 							{etiqueta=actualizar((red+j*dim+i),historial,s2,etiqueta);
 							}
 						}
-					
+
 				}
 		}
-		
+
 	}
 
 	return 0;
@@ -183,7 +176,6 @@ int actualizar(int *local,int *historial,int s,int etiqueta)
 	}else{
 	*local=etiqueta;
 	etiqueta++;
-		
 	}
 	return etiqueta;
 }
@@ -221,12 +213,10 @@ for (i=0; i<dim*dim; i++)
 {	s=*(historial+*(red+i));
 	while(s<0)
 	{
-	s= *(historial +(-s));	
-
-
+	s= *(historial +(-s));
 	}
 	*(red+i)=s;
-}	
+}
 return 0;
 }
 
@@ -238,14 +228,14 @@ int j=0;
 int k;
 int b=0;
 int *vect1;
-vect1=(int *)malloc(dim*dim*sizeof(int)); 
+vect1=(int *)malloc(dim*dim*sizeof(int));
 int *vect2;
-vect2=(int *)malloc(dim*dim*sizeof(int)); 
+vect2=(int *)malloc(dim*dim*sizeof(int));
 
 for(k=0;k<dim*dim;k++)
 {
-	*(vect1+k)=0
-	*(vect2+k)=0
+	*(vect1+k)=0;
+	*(vect2+k)=0;
 }
 
 for (i=0; i<dim; i++)
@@ -270,8 +260,3 @@ b=1;
 
 return b;
 }
-//*************************************************************
-
-// Creo que anda bien. Habría que revisar un poco más que pasa con más casos. 
-// Falta: Reetiquetar todo, ver si percola o no
-
