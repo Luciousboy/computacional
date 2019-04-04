@@ -19,45 +19,54 @@ int main()
 
 {
 
+
 	srand(time(NULL));
 	int dim = 5;
-  float p = 0.5;
+	float p = 0.5;
 	int etiqueta=2;
 	int *red;
 	int b;
-	red=(int *)malloc(dim*dim*sizeof(int));
+	int k;
+	red=(int *)malloc(dim*dim*sizeof(int));  
 	int *historial;
 	historial=(int *)malloc(dim*dim*sizeof(int));
 	int r;
-	for(r=0;r<dim*dim;r++)//Armar el historial
-	{*(historial+r)=r;
+
+	for (k=0;k<10;k++)
+	{
+		for(r=0;r<dim*dim;r++)//Armar el historial
+		{*(historial+r)=r;
+		}
+
+		poblar(red, p,dim);
+		printf("Red Originial: \n");	
+		imprimirMat(red,dim);
+
+		clasificar(red,
+		dim,historial,etiqueta);
+		printf("Historial: \n");	
+		imprimirVector(historial,dim);
+
+		printf("Red modificada: \n");	
+		imprimirMat(red,dim);
+
+		arreglar_etiquetas(red, historial, dim);
+		printf("Red arreglada: \n");	
+		imprimirMat(red,dim);
+
+		b=percola(red, dim);
+		if (b)
+		{printf("¡Percoló!");
+		p=p-p/2;
+		}else{
+		printf("Nope, no percoló"); 
+		p=p+p/2;	
+		}
+		printf("\n"); 	
+
+		free(red);	
+		printf("%f",p);	
 	}
-
-	poblar(red, p,dim);
-	printf("Red Originial1: \n");
-	imprimirMat(red,dim);
-
-	clasificar(red,
-	dim,historial,etiqueta);
-	printf("Historial: \n");
-	imprimirVector(historial,dim);
-
-	printf("Red modificada: \n");
-	imprimirMat(red,dim);
-
-	arreglar_etiquetas(red, historial, dim);
-	printf("Red arreglada: \n");
-	imprimirMat(red,dim);
-
-	b=percola(red, dim);
-	if (b)
-	{printf("¡Percoló!");
-	}else{
-	printf("Nope, no percoló");
-	}
-	printf("\n");
-
-	free(red);
 	return 0;
 }
 
