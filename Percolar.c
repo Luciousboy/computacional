@@ -18,54 +18,61 @@ int percola(int *red, int dim);
 int main()
 
 {
-
-
 	srand(time(NULL));
 	int dim = 5;
 	float p = 0.5;
+	float dp = 0.5;
 	int etiqueta=2;
 	int *red;
 	int b;
 	int k;
-	red=(int *)malloc(dim*dim*sizeof(int));  
+	int l;
+	int h=0;
+	red=(int *)malloc(dim*dim*sizeof(int));
 	int *historial;
 	historial=(int *)malloc(dim*dim*sizeof(int));
 	int r;
-
-	for (k=0;k<10;k++)
+	while (h<27000)
 	{
-		for(r=0;r<dim*dim;r++)//Armar el historial
-		{*(historial+r)=r;
+		l=rand();
+		for (k=0;k<10;k++)
+		{
+			for(r=0;r<dim*dim;r++)//Armar el historial
+			{*(historial+r)=r;
+			}
+			srand(l); //si pongo h podria detectar errores
+			poblar(red, p,dim);
+			printf("Red Originial: \n");
+			imprimirMat(red,dim);
+
+			clasificar(red,
+			dim,historial,etiqueta);
+			printf("Historial: \n");
+			imprimirVector(historial,dim);
+
+			printf("Red modificada: \n");
+			imprimirMat(red,dim);
+
+			arreglar_etiquetas(red, historial, dim);
+			printf("Red arreglada: \n");
+			imprimirMat(red,dim);
+
+			b=percola(red, dim);
+			dp = dp/2;
+			if (b)
+			{printf("¡Percoló!");
+			p = p-dp;
+			}else{
+			printf("Nope, no percoló");
+			p=p+dp;
+			}
+			printf("\n");
+			//fopen(); esto es para guardar en txt
+			printf("%f",p);
+			//fclose();
 		}
-
-		poblar(red, p,dim);
-		printf("Red Originial: \n");	
-		imprimirMat(red,dim);
-
-		clasificar(red,
-		dim,historial,etiqueta);
-		printf("Historial: \n");	
-		imprimirVector(historial,dim);
-
-		printf("Red modificada: \n");	
-		imprimirMat(red,dim);
-
-		arreglar_etiquetas(red, historial, dim);
-		printf("Red arreglada: \n");	
-		imprimirMat(red,dim);
-
-		b=percola(red, dim);
-		if (b)
-		{printf("¡Percoló!");
-		p=p-p/2;
-		}else{
-		printf("Nope, no percoló"); 
-		p=p+p/2;	
-		}
-		printf("\n"); 	
-
-		free(red);	
-		printf("%f",p);	
+		h++;
+		free(red);
 	}
 	return 0;
 }
