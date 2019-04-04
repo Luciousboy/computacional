@@ -19,7 +19,7 @@ int main()
 
 {
 
-	srand(time(NULL));
+	srand(1);
 	int dim = 5;
     	float p = 0.5;
 	int etiqueta=2;
@@ -36,8 +36,13 @@ int main()
 	poblar(red, p,dim);
 	printf("Red Originial: \n");	
 	imprimirMat(red,dim);
-
-	clasificar(red,dim,historial,etiqueta);
+		
+	poblar(red, p,dim);
+	printf("Red Originial: \n");	
+	imprimirMat(red,dim);
+	
+	clasificar(red,
+	dim,historial,etiqueta);
 	printf("Historial: \n");	
 	imprimirVector(historial,dim);
 	
@@ -54,6 +59,7 @@ int main()
 	}else{
 	printf("Nope, no percoló"); 	
 	}
+	printf("\n"); 	
 	
 	free(red);		
 	return 0;
@@ -215,7 +221,9 @@ for (i=0; i<dim*dim; i++)
 {	s=*(historial+*(red+i));
 	while(s<0)
 	{
-	s= *(historial+(-1)* *(red+s));	
+	s= *(historial +(-s));	
+
+
 	}
 	*(red+i)=s;
 }	
@@ -227,13 +235,18 @@ int percola(int *red, int dim)
 {
 int i;
 int j=0;
+int k;
 int b=0;
 int *vect1;
 vect1=(int *)malloc(dim*dim*sizeof(int)); 
 int *vect2;
 vect2=(int *)malloc(dim*dim*sizeof(int)); 
 
-
+for(k=0;k<dim*dim;k++)
+{
+	*(vect1+k)=0
+	*(vect2+k)=0
+}
 
 for (i=0; i<dim; i++)
 {
