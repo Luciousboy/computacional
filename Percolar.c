@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <unistd.h>
 
 //---------------------AVISO LAS FUNCIONES QUE VAMOS A USAR
 int poblar(int *red,float p,int dim);
@@ -18,60 +19,74 @@ int percola(int *red, int dim);
 int main()
 
 {
+	FILE * fp;
 	srand(time(NULL));
-	int dim = 5;
-	float p = 0.5;
-	float dp = 0.5;
-	int etiqueta=2;
-	int *red;
-	int b;
-	int k;
-	int l;
-	int h=0;
-	red=(int *)malloc(dim*dim*sizeof(int));
-	int *historial;
-	historial=(int *)malloc(dim*dim*sizeof(int));
-	int r;
-	while (h<27000)
-	{
-		l=rand();
-		for (k=0;k<10;k++)
-		{
-			for(r=0;r<dim*dim;r++)//Armar el historial
-			{*(historial+r)=r;
-			}
-			srand(l); //si pongo h podria detectar errores
-			poblar(red, p,dim);
-			printf("Red Originial: \n");
-			imprimirMat(red,dim);
+	int *red_dim;
+	red_dim=(int *)malloc( 5*sizeof(int));//multiplico por 5 porque son 5 elementos
+	*(red_dim)=4;
+	*(red_dim+1)=16;
+	/*for(j=2;j<5;j++) //para llenarlo con las otras dimensiones
+	{	*(red_dim+j)=*(red_dim+j-1)*2;
+	}*/
+	int i;
+	for (i=0;i<2;i++) //cambiar por i<5 si hacemos todos los casos
+	{	int dim=*(red_dim+i);
+		int etiqueta=2;
+		int *red;
+		int b;
+		int k;
+		int l;
+		int h=0;
+		red=(int *)malloc(dim * dim *sizeof(int));
+		int *historial;
+		historial=(int *)malloc( dim*dim*sizeof(int));
+		int r;
+		while (h<27000)
+		{	float p = 0.5;
+			float dp = 0.5;
+			l=rand();
+			for (k=0;k<10;k++)
+			{ for(r=0;r<dim*dim;r++)//Armar el historial
+				{*(historial+r)=r;
+				}
+				srand(l); //si pongo h podria detectar errores
+				poblar(red, p,dim);
+	//			printf("Red Originial: \n");
+	//			imprimirMat(red,dim);
 
-			clasificar(red,
-			dim,historial,etiqueta);
-			printf("Historial: \n");
-			imprimirVector(historial,dim);
+				clasificar(red, dim,historial,etiqueta);
+	//			printf("Historial: \n");
+	//			imprimirVector(historial,dim);
 
-			printf("Red modificada: \n");
-			imprimirMat(red,dim);
+	//			printf("Red modificada: \n");
+	//			imprimirMat(red,dim);
 
-			arreglar_etiquetas(red, historial, dim);
-			printf("Red arreglada: \n");
-			imprimirMat(red,dim);
+				arreglar_etiquetas(red, historial, dim);
+	//			printf("Red arreglada: \n");
+	//			imprimirMat(red,dim);
 
-			b=percola(red, dim);
-			dp = dp/2;
-			if (b)
-			{printf("¡Percoló!");
-			p = p-dp;
-			}else{
-			printf("Nope, no percoló");
-			p=p+dp;
-			}
-			printf("\n");
-			//fopen(); esto es para guardar en txt
-			printf("%f",p);
-			//fclose();
+				b=percola(red, dim);
+				dp = dp/2;
+				if (b){
+	//			printf("¡Percoló!");
+				p = p-dp;
+				}else{
+	//			printf("Nope, no percoló");
+				p=p+dp;
+				}
+	//			printf("\n");
+			h++;
+	//guardo todos los p
+			if (h<27000) {
+				fp = fopen ("valores_de_p.txt", "a");
+				fprintf(fp,"%f ",p);
+				fclose(fp);
+			} else {
+				fp = fopen ("valores_de_p.txt", "a");
+				fprintf(fp,"\n \n \n");
+				fclose(fp);}
 		}
-		h++;
+		}
 		free(red);
 	}
 	return 0;
@@ -178,15 +193,13 @@ int clasificar(int *red, int dim,int *historial,int etiqueta)
 }
 
 //*************************************************************
-
 int actualizar(int *local,int *historial,int s,int etiqueta)
 {
-
 	if (s>0)
 	{
-	while(*historial+s<0)
+	while(*(historial+s)<0)
 		{
-			s=-(*historial+s);
+			s=-*(historial+s);
 		}
 	*local=s;
 	}else{
@@ -199,11 +212,11 @@ int actualizar(int *local,int *historial,int s,int etiqueta)
 int etiqueta_falsa(int *local, int *historial, int s1, int s2, int etiqueta)
 {
 	int mini,maxi;
-	while(*historial+s1<0)
+	while(*(historial+s1)<0)
 	{
 		s1=-(*(historial+s1));
 	}
-	while(*historial+s2<0)
+	while(*(historial+s2)<0)
 	{
 		s2=-(*(historial+s2));
 	}
