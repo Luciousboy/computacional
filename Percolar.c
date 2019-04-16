@@ -14,18 +14,17 @@ int actualizar(int *local,int *historial,int s,int etiqueta);
 int etiqueta_falsa(int *local, int *historial, int s1, int s2, int etiqueta);
 int arreglar_etiquetas(	int *red,int *historial, int dim);
 int percola(int *red, int dim);
-int percola_fragmentos(int *red, int dim);
+int ns(int *red, int dim);
 
 //---------------------Main--------------------------------
 int main()
 
 {
-	FILE * fp;
 	srand(time(NULL));
 	int *red_dim;
 	red_dim=(int *)malloc( 5*sizeof(int));//multiplico por 5 porque son 5 elementos
 	*(red_dim)=4;
-	*(red_dim+1)=16;
+	//*(red_dim+1)=16;
 	/*for(j=2;j<5;j++) //para llenarlo con las otras dimensiones
 	{	*(red_dim+j)=*(red_dim+j-1)*2;
 	}*/
@@ -42,8 +41,15 @@ int main()
 		red=(int *)malloc(dim * dim *sizeof(int));
 		int *historial;
 		historial=(int *)malloc( dim*dim*sizeof(int));
+		int *size;
+		size=(int *)malloc( dim*dim*sizeof(int));
 		int r;
-		while (h<27000)
+		int iteraciones=10;//27000
+		//Para guardar
+		sprintf(filename,"datos_L=%d.txt",dim);
+		FILE * fp;
+
+		while (h<iteraciones)
 		{	float p = 0.5;
 			float dp = 0.5;
 			l=rand();
@@ -55,10 +61,9 @@ int main()
 				poblar(red, p,dim);
 				clasificar(red, dim,historial,etiqueta);
 				arreglar_etiquetas(red, historial, dim);
-				b=percola(red, dim);
-//				b,k=percola_fragmentos(red, dim);
-				dp = dp/2;
+				b,k=percola(red, dim);
 
+				dp = dp/2;
 				if (b){
 	//			printf("¡Percoló!");
 				p = p-dp;
@@ -68,16 +73,15 @@ int main()
 				}
 			h++;
 			//defino el p_mean
-			p_mean = (p_mean + p) /27000;
+			p_mean = p_mean + (p /iteraciones);
 
 	//guardo todos los p
-			if (h<27000) {
-				fp = fopen ("valores_de_p.txt", "a");
-				fprintf(fp,"%f ",p_mean);
-				fclose(fp);
-			} else {
-				fp = fopen ("valores_de_p.txt", "a");
-				fprintf(fp,"\n \n \n");
+			fp = fopen ("datos_L=%d.txt", "a");
+			fprintf(fp,"%f ",p);
+			fclose(fp);
+			if (h=10) {
+				fp = fopen ("datos_L=%d.txt", "a");
+				fprintf(fp,"\n \n \n %f",p_mean);
 				fclose(fp);}
 		}
 		}
@@ -250,6 +254,7 @@ int i;
 int j=0;
 int k;
 int b=0;
+int sum=0;
 int *vect1;
 vect1=(int *)malloc(dim*dim*sizeof(int));
 int *vect2;
@@ -274,40 +279,45 @@ for (i=0; i<dim; i++)
 	}
 }
 
-/*estamos comparando miembro a miembro, nos perdemos si percola
-cuando tenemos un elemento en la posicion i y otro en la i+1 */
-/* idea para solucionarlo, es comparar si directamente *(red+i) == *(red+(dim*(dim-1))+i)
-entonces si es verdadero pertenecen al mismo grupo, entonces percolaron
+/* estamos viendo si hay un elemento en la posicion correspondiente al grupo
 */
-while (*(vect1+j) * *(vect2+j)==0 && j<dim*dim)
+for (j;j<dim*dim;j++)
 {
-j++;
+	sum=sum+(*(vect1+j) * *(vect2+j));
 }
 
-if (j<dim*dim)
-b=1;
+if (sum>0){
+b=1;}
 return b;
+return sum;
 }
 //*************************************************************
-int percola_fragmentos(int *red, int dim)
+int ns(int *red, int dim)
 {
 	int i;
 	int j;
-	int k=0;
-	int b=0;
+	int k;
+	int *etiquetas;
+	etiquetas=(int *)malloc( dim*dim*sizeof(int));
+	int *size;
+	size=(int *)malloc( dim*dim*sizeof(int));
 	/* Siguiendo la misma idea de comparar si directamente *(red+i) == *(red+(dim*(dim-1))+i)
-	podemos contar cada vez que ocurre entonces van a ser la cantidad de fragrmentos que percolaron.
-	*/
-for (i=0; i<dim; i++)
-{//tengo que buscar en tooodos contra tooodos los elementos para evitar el problema de arriba
-	for (j=0; j<dim; j++)
-	{	if(*(red+i) == *(red+(dim*(dim-1))+j) && *(red+i)>1 ) //tengo que excluir los casos con 1, porque son aislados (chequiar)
-		{k++; //cada vez que percola y son del mismo grupo entonces sumo 1
-		}
+	podemos contar cada vez que ocurre	*/
+	// armo los vectores
+	for(k=0;k<dim*dim;k++)
+	{
+		*(etiquetas+k)=0;
+		*(size+k)=0;
 	}
-}
-if (k>0)
-{b=1; //O sea, percoló y además lo hizo k veces.
-}
-return b,k;
+
+	for (i=0; i<dim; i++)
+	{	for (j=0; j<dim; j++)
+			(*(etiquetas+*(red+i*dim+j)))++;//[00532] para etiqueta 0 y 1 el tamaño es cero
+	}
+
+	for(k=0;k<dim*dim;k++){
+		(*(size+*(etiquetas+k)))++; //va a estar ordenado de menor a mayor tamaño
+	}//cantidad de fragmentos para todos los tamaños
+
+return size;
 }
