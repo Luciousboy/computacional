@@ -14,37 +14,44 @@ int actualizar(int *local,int *historial,int s,int etiqueta);
 int etiqueta_falsa(int *local, int *historial, int s1, int s2, int etiqueta);
 int arreglar_etiquetas(	int *red,int *historial, int dim);
 int percola(int *red, int dim);
-int ns(int *red, int dim);
+int ns(int *red, int dim, int *size);
 
 //---------------------Main--------------------------------
 int main()
 
 {
 	srand(time(NULL));
+
+	//Hacer el ejercicio con 5 grillas distintas
 	int *red_dim;
 	red_dim=(int *)malloc( 5*sizeof(int));//multiplico por 5 porque son 5 elementos
 	*(red_dim)=4;
-	//*(red_dim+1)=16;
-	/*for(j=2;j<5;j++) //para llenarlo con las otras dimensiones
+	*(red_dim+1)=16;
+	int j;
+	for(j=2;j<5;j++) //para llenarlo con las otras dimensiones
 	{	*(red_dim+j)=*(red_dim+j-1)*2;
-	}*/
+	}
 	int i;
-	for (i=0;i<2;i++) //cambiar por i<5 si hacemos todos los casos
-	{	int dim=*(red_dim+i);
+	for (i=0;i<5;i++) //cambiar por i<5 si hacemos todos los casos
+	{	//Aca empieza el ejercicio para una grilla
+		int dim=*(red_dim+i);
 		int etiqueta=2;
-		int *red;
+		
 		int b;
 		int k;
 		int l;
 		int h=0;
-		int p_mean=0;
-		red=(int *)malloc(dim * dim *sizeof(int));
-		int *historial;
-		historial=(int *)malloc( dim*dim*sizeof(int));
-		int *size;
-		size=(int *)malloc( dim*dim*sizeof(int));
+
+			int *red;
+			red=(int *)malloc(dim * dim *sizeof(int));
+			int *historial;
+			historial=(int *)malloc( dim*dim*sizeof(int));
+
+		//int *size;
+		//size=(int *)malloc( dim*dim*sizeof(int));
 		int r;
-		int iteraciones=10;//27000
+		int iteraciones=27000;//27000
+		char filename[64];
 		//Para guardar
 		sprintf(filename,"datos_L=%d.txt",dim);
 		FILE * fp;
@@ -53,39 +60,42 @@ int main()
 		{	float p = 0.5;
 			float dp = 0.5;
 			l=rand();
-			for (k=0;k<10;k++)
-			{ for(r=0;r<dim*dim;r++)//Armar el historial
+			srand(l); 
+
+			for (k=0;k<10;k++) //iteraciones hasta llegar al p critico
+			{ 	
+
+
+				for(r=0;r<dim*dim;r++)//Armar el historial
 				{*(historial+r)=r;
 				}
-				srand(l); //si pongo h podria detectar errores
+
+				//si pongo h podria detectar errores
 				poblar(red, p,dim);
 				clasificar(red, dim,historial,etiqueta);
 				arreglar_etiquetas(red, historial, dim);
-				b,k=percola(red, dim);
+				b=percola(red, dim);
 
 				dp = dp/2;
-				if (b){
-	//			printf("¡Percoló!");
+
+				if (b>0){
+				//printf("¡Percoló!");
 				p = p-dp;
 				}else{
-	//			printf("Nope, no percoló");
+				//printf("Nope, no percoló");
 				p=p+dp;
 				}
-			h++;
-			//defino el p_mean
-			p_mean = p_mean + (p /iteraciones);
-
-	//guardo todos los p
-			fp = fopen ("datos_L=%d.txt", "a");
+			}
+			h++;	
+		
+			//guardo todos los p
+			fp = fopen (filename, "a");
 			fprintf(fp,"%f ",p);
 			fclose(fp);
-			if (h=10) {
-				fp = fopen ("datos_L=%d.txt", "a");
-				fprintf(fp,"\n \n \n %f",p_mean);
-				fclose(fp);}
-		}
-		}
-		free(red);
+			//free(red);
+			//free(historial);
+		}	
+
 	}
 	return 0;
 }
@@ -252,72 +262,87 @@ int percola(int *red, int dim)
 {
 int i;
 int j=0;
-int k;
 int b=0;
-int sum=0;
 int *vect1;
 vect1=(int *)malloc(dim*dim*sizeof(int));
 int *vect2;
 vect2=(int *)malloc(dim*dim*sizeof(int));
+int k;
 
-// armo los vectores
-for(k=0;k<dim*dim;k++)
-{
-	*(vect1+k)=0;
-	*(vect2+k)=0;
-}
 
 for (i=0; i<dim; i++)
 {
 
-	if (*(red+i)>0)
-	{
-	*(vect1+*(red+i))=1;
-	}if(*(red+(dim*(dim-1))+i)>0) //Le especifique el >0 por si *(red+(dim*(dim-1))+i) llega a ser =! 0,1
-	{
-	*(vect2+*(red+(dim*(dim-1))+i))=1;
-	}
+    if (*(red+i)>0)
+    {
+    *(vect1+*(red+i))=1;
+    }if(*(red+(dim*(dim-1))+i))
+    {
+    *(vect2+*(red+(dim*(dim-1))+i))=1;
+    }
 }
 
-/* estamos viendo si hay un elemento en la posicion correspondiente al grupo
-*/
-for (j;j<dim*dim;j++)
+while (*(vect1+j) * *(vect2+j)==0 && j<dim*dim)
 {
-	sum=sum+(*(vect1+j) * *(vect2+j));
+j++;
 }
 
-if (sum>0){
-b=1;}
+if (j<dim*dim)
+{
+ 
+    for (i=0; i<dim; i++)
+    {
+       
+        for (k=0; k<dim; k++)
+        {
+            if (*(red+i*dim+k)==j){
+ 
+            b++;
+            }
+        }       
+    }
+}
+
+
 return b;
-return sum;
 }
+
+
 //*************************************************************
-int ns(int *red, int dim)
+int ns(int *red, int dim, int *size)
 {
-	int i;
-	int j;
-	int k;
-	int *etiquetas;
-	etiquetas=(int *)malloc( dim*dim*sizeof(int));
-	int *size;
-	size=(int *)malloc( dim*dim*sizeof(int));
-	/* Siguiendo la misma idea de comparar si directamente *(red+i) == *(red+(dim*(dim-1))+i)
-	podemos contar cada vez que ocurre	*/
-	// armo los vectores
-	for(k=0;k<dim*dim;k++)
-	{
-		*(etiquetas+k)=0;
-		*(size+k)=0;
-	}
-
-	for (i=0; i<dim; i++)
-	{	for (j=0; j<dim; j++)
-			(*(etiquetas+*(red+i*dim+j)))++;//[00532] para etiqueta 0 y 1 el tamaño es cero
-	}
-
-	for(k=0;k<dim*dim;k++){
-		(*(size+*(etiquetas+k)))++; //va a estar ordenado de menor a mayor tamaño
-	}//cantidad de fragmentos para todos los tamaños
-
-return size;
+    int i;
+    int j;
+    int k;
+    int *etiquetas;
+    etiquetas=(int *)malloc( dim*dim*sizeof(int));
+    /* Siguiendo la misma idea de comparar si directamente *(red+i) == *(red+(dim*(dim-1))+i)
+    podemos contar cada vez que ocurre    */
+    // armo los vectores
+    for(k=0;k<dim*dim;k++)
+    {
+        *(etiquetas+k)=0;
+        *(size+k)=0;
+    }
+ 
+    for (i=0; i<dim; i++)
+    {
+       
+        for (j=0; j<dim; j++)
+        {
+            if (*(red+i*dim+j)>0){
+            (*(etiquetas+*(red+i*dim+j)))++;//[00532] para etiqueta 0 y 1 el tamaño es cero
+            }
+        }       
+    }
+ 
+    for(k=0;k<dim*dim;k++){
+        if (*(etiquetas+k)>0)
+        (*(size+*(etiquetas+k)))++; //va a estar ordenado de menor a mayor tamaño
+    }//cantidad de fragmentos para todos los tamaños
+ 
+return 0;
+free(etiquetas);
 }
+
+
