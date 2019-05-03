@@ -48,9 +48,9 @@ int main()
 		int l;
 
 		int *red;
-		red=(int *)malloc((dim *dim+1) *sizeof(int));
+		red=(int *)malloc((dim *dim) *sizeof(int));
 		int *historial;
-		historial=(int *)malloc((dim*dim+1)*sizeof(int));
+		historial=(int *)malloc((dim*dim)*sizeof(int));
 
 		//int *size;
 		//size=(int *)malloc( dim*dim*sizeof(int));
@@ -62,11 +62,11 @@ int main()
 		{	float p = 0.5;
 			float dp = 0.5;
 			l=rand();
-			srand(l);
+
 
 			for (k=0;k<10;k++) //iteraciones hasta llegar al p critico
 			{
-
+				srand(l);
 
 				for(r=0;r<dim*dim;r++)//Armar el historial
 				{*(historial+r)=r;
@@ -76,10 +76,13 @@ int main()
 				poblar(red, p,dim);
 				clasificar(red, dim,historial,etiqueta);
 				arreglar_etiquetas(red, historial, dim);
+
 				b=percola(red, dim);
 
-				dp = dp/2;
+				dp = (float)dp/(float)2;
 
+
+				//printf("%f",b);
 				if (b>0){
 				//printf("¡Percoló!");
 				p = p-dp;
@@ -89,8 +92,9 @@ int main()
 				}
 			}
 			//guardo todos los p
-			fprintf(fp,"%f ",p);
 			h++;
+			fprintf(fp,"%f ",p);
+			
 		}
 		fclose(fp);
 		free(red);
@@ -262,12 +266,17 @@ int percola(int *red, int dim)
 int i;
 int j=0;
 int b=0;
+int r=0;
 int *vect1;
 vect1=(int *)malloc(dim*dim*sizeof(int));
 int *vect2;
 vect2=(int *)malloc(dim*dim*sizeof(int));
 int k;
 
+for(r=0;r<dim*dim;r++)//Armar el historial
+	{*(vect1+r)=0;
+	*(vect2+r)=0;
+	}
 
 for (i=0; i<dim; i++)
 {
@@ -284,22 +293,11 @@ for (i=0; i<dim; i++)
 while (*(vect1+j) * *(vect2+j)==0 && j<dim*dim)
 {
 j++;
+
 }
 
 if (j<dim*dim)
-{
-
-    for (i=0; i<dim; i++)
-    {
-
-        for (k=0; k<dim; k++)
-        {
-            if (*(red+i*dim+k)==j){
-
-            b++;
-            }
-        }
-    }
+{       b=1;
 }
 free(vect1);
 free(vect2);
