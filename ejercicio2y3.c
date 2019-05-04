@@ -32,8 +32,8 @@ int main()
 	{	*(red_dim+j)=*(red_dim+j-1)*2;
 	}
 	int i;
-	for (i=4;i<5;i++) //cambiar por i<5 si hacemos todos los casos
-		{float p=0.57;
+	for (i=1;i<2;i++) //cambiar por i<5 si hacemos todos los casos
+		{float p=0.5;
 		float dp=0.01;
 		int iteraciones=0;
 		int iteraciones_max=30000;
@@ -49,7 +49,6 @@ int main()
 		int etiqueta=2;
 
 		int b;
-		int k;
 		int l;
 		int *red;
 		red=(int *)malloc(dim * dim *sizeof(int));
@@ -89,7 +88,7 @@ int main()
 			p=p+dp;
 			}
 
-			
+
 		fclose(fp);
 		free(red);
 		free(historial);
@@ -265,6 +264,7 @@ int *vect1;
 vect1=(int *)malloc(dim*dim*sizeof(int));
 int *vect2;
 vect2=(int *)malloc(dim*dim*sizeof(int));
+int r;
 int k;
 for(r=0;r<dim*dim;r++)//Armar el historial
 	{*(vect1+r)=0;
