@@ -277,8 +277,12 @@ int *vect1;
 vect1=(int *)malloc(dim*dim*sizeof(int));
 int *vect2;
 vect2=(int *)malloc(dim*dim*sizeof(int));
-int k;
+int r;
 
+for(r=0;r<dim*dim;r++)//Armar el historial
+	{*(vect1+r)=0;
+	*(vect2+r)=0;
+	}
 
 for (i=0; i<dim; i++)
 {
