@@ -32,7 +32,7 @@ int main()
 	{	*(red_dim+j)=*(red_dim+j-1)*2;
 	}
 	int i;
-	for (i=1;i<2;i++) //cambiar por i<5 si hacemos todos los casos
+	for (i=4;i<5;i++) //cambiar por i<5 si hacemos todos los casos
 		{float p=0.5;
 		float dp=0.01;
 		int iteraciones=0;
@@ -73,6 +73,7 @@ int main()
 				{
 				percolo++;
 				}
+			
 			b_tot=b_tot+b;
 			iteraciones++;
 			}
