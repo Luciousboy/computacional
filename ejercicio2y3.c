@@ -32,13 +32,13 @@ int main()
 	{	*(red_dim+j)=*(red_dim+j-1)*2;
 	}
 	int i;
-	for (i=4;i<5;i++) //cambiar por i<5 si hacemos todos los casos
-		{float p=0.5;
+	for (i=3;i<5;i++) //cambiar por i<5 si hacemos todos los casos
+		{float p=0.57;
 		float dp=0.01;
 		int iteraciones=0;
-		int iteraciones_max=30000;
+		int iteraciones_max=27000;
 		int dim=*(red_dim+i);
-		int b_tot=0;
+
 
 		//Para guardar
 		FILE *fp;
@@ -60,6 +60,7 @@ int main()
 			{float b_mean=0;
 			float percolacion=0;
 			int percolo=0;
+			int b_tot=0;
 			while (percolo<iteraciones_max)
 			{l=rand();
 			srand(l);
@@ -72,14 +73,18 @@ int main()
 				if(b>0)
 				{
 				percolo++;
+				b_tot=b_tot+b;
+				
 				}
 			
-			b_tot=b_tot+b;
+
+
 			iteraciones++;
 			}
 			//1º probabilidad 2º masa 3º porcentaje de percolacion
 			fprintf(fp,"%f ", p);
-			b_mean=(float)b_tot/(float)iteraciones_max;
+			b_mean=(float)b_tot/(float)percolo;			
+
 			fprintf(fp,"%f ", b_mean);
 
 			percolacion=(float)percolo/(float)iteraciones;
